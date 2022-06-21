@@ -1,6 +1,6 @@
-export async function createNavBar(id, className, options) {
+export async function createNavBar(id, className, options, inroot) {
   const iterable = options.childList;
-  const rootElement = document.getElementById("root");
+  const rootElement = document.getElementById(inroot);
   const theElement = document.createElement("div");
   theElement.setAttribute("id", id);
   theElement.classList = className;
@@ -67,9 +67,6 @@ export async function createButton(id, name, classname, containerid, text) {
 export async function createForm(id, options, containerid, classname) {
   const formElement = document.createElement("form");
   formElement.setAttribute("id", id);
- 
-
-
   for (const input of options.inputs) {
     const newInputElement = document.createElement("input");
     newInputElement.setAttribute("type", input.type);
@@ -77,12 +74,11 @@ export async function createForm(id, options, containerid, classname) {
     newInputElement.setAttribute("id", input.id);
     newInputElement.setAttribute("value", input.value);
     newInputElement.setAttribute("placeholder", input.placeholder);
-    newInputElement.classList.add(input.classname); 
-    const formContainer = document.createElement("div")
-    formContainer.classList = classname
+    newInputElement.classList.add(input.classname);
+    const formContainer = document.createElement("div");
+    formContainer.classList = classname;
     formContainer.appendChild(newInputElement);
     formElement.appendChild(formContainer);
-
   }
 
   for (const label of options.labels) {
@@ -91,30 +87,37 @@ export async function createForm(id, options, containerid, classname) {
     newLabelElement.textContent = label.text;
     newLabelElement.classList = label.classname;
     formElement.appendChild(newLabelElement);
-    
   }
 
   const newSubmitButton = document.createElement("button");
   newSubmitButton.setAttribute("id", options.submit.id);
   newSubmitButton.textContent = options.submit.text;
   newSubmitButton.classList = options.submit.classname;
-  if(options.submit.action === "post"){
-    newSubmitButton.addEventListener("click", function(){
-      //VER
+  if (options.submit.action === "post") {
+    newSubmitButton.addEventListener("click", function () {
       fetch(options.submit.href, options.submit.actionoptions)
-      .then(res=>res.json())
-      .then(data=>console.log("Data enviada: ", data))
-    })
+        .then((res) => res.json())
+        .then((data) => console.log("Data enviada: ", data));
+    });
   }
   formElement.appendChild(newSubmitButton);
 
-  
-
-  if (!!containerid) {
-    const rootElement = document.getElementById(containerid);
+  let rootElement;
+  if (containerid) {
+    rootElement = document.getElementById(containerid);
     rootElement.appendChild(formElement);
   } else {
-    const rootElement = document.getElementById("root");
+    rootElement = document.getElementById("root");
     rootElement.appendChild(formElement);
   }
+}
+
+export async function createContainer(id, classname, order) {
+  const containerElement = document.createElement("div");
+  containerElement.setAttribute("id", id);
+  containerElement.setAttribute("order", order);
+  containerElement.classList = classname;
+  containerElement.classList.add("containerGroup")
+  const rootElement = document.getElementById("root") 
+  rootElement.appendChild(containerElement)
 }
