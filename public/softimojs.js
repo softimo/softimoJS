@@ -81,13 +81,17 @@ export async function createForm(id, options, containerid, classname) {
     formElement.appendChild(formContainer);
   }
 
-  for (const label of options.labels) {
-    const newLabelElement = document.createElement("label");
-    newLabelElement.setAttribute("for", label.for);
-    newLabelElement.textContent = label.text;
-    newLabelElement.classList = label.classname;
-    formElement.appendChild(newLabelElement);
+  if(options.labels!==null){
+    for (const label of options.labels) {
+      const newLabelElement = document.createElement("label");
+      newLabelElement.setAttribute("for", label.for);
+      newLabelElement.textContent = label.text;
+      newLabelElement.classList = label.classname;
+      formElement.appendChild(newLabelElement);
+    }
+
   }
+  
 
   const newSubmitButton = document.createElement("button");
   newSubmitButton.setAttribute("id", options.submit.id);
