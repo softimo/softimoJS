@@ -68,11 +68,13 @@ export async function createForm(id, options, containerid, classname) {
   const formElement = document.createElement("form");
   formElement.setAttribute("id", id);
 
+  const inputsIds = []
   for (const input of options.inputs) {
     const newInputElement = document.createElement("input");
     newInputElement.setAttribute("type", input.type);
     newInputElement.setAttribute("name", input.name);
     newInputElement.setAttribute("id", input.id);
+    inputsIds.push(input.id)
     newInputElement.setAttribute("value", input.value);
     newInputElement.setAttribute("placeholder", input.placeholder);
     newInputElement.classList.add(input.classname);
@@ -80,8 +82,7 @@ export async function createForm(id, options, containerid, classname) {
     formContainer.classList = classname;
     newInputElement.addEventListener("change", (e) => {
       newInputElement.value = e.target.value;
-      console.log(newInputElement.value);
-    });
+     });
     formContainer.appendChild(newInputElement);
     formElement.appendChild(formContainer);
   }
@@ -101,15 +102,32 @@ export async function createForm(id, options, containerid, classname) {
   newSubmitButton.setAttribute("type", "submit")
   newSubmitButton.textContent = options.submit.text;
   newSubmitButton.classList = options.submit.classname;
-  newSubmitButton.setAttribute("formaction",  options.submit.formactionURL)
+  //newSubmitButton.setAttribute("formaction",  options.submit.formactionURL)
   newSubmitButton.setAttribute("formenctype",  options.submit.formenctype)
   newSubmitButton.setAttribute("formmethod",  options.submit.method)
   if (options.submit.method === "post") {
-    newSubmitButton.addEventListener("click", async function (e) {
-      console.log(e.target.value)
-      /* fetch(options.submit.href, options.submit.actionoptions)
+    newSubmitButton.addEventListener("click", async function () {
+      const dataArray = []
+      for (const id of inputsIds) {
+        let input = document.getElementById(id)
+        console.log(input)
+        let objDataUnique = {
+          id:input.id,
+          value:input.value
+        }
+        dataArray.push(objDataUnique)
+
+      }
+      const actionoptions = {}
+       
+      if(options.submit.method === "POST"){
+    
+        actionoptions.body = dataArray
+      }
+     
+      fetch(options.submit.formactionURL,actionoptions)
         .then((res) => res.json())
-        .then((data) => console.log("Data enviada: ", data));*/
+        .then((data) => console.log("Data enviada: ", data));
     });
   }
   formElement.appendChild(newSubmitButton);
