@@ -67,6 +67,7 @@ export async function createButton(id, name, classname, containerid, text) {
 export async function createForm(id, options, containerid, classname) {
   const formElement = document.createElement("form");
   formElement.setAttribute("id", id);
+
   for (const input of options.inputs) {
     const newInputElement = document.createElement("input");
     newInputElement.setAttribute("type", input.type);
@@ -77,11 +78,15 @@ export async function createForm(id, options, containerid, classname) {
     newInputElement.classList.add(input.classname);
     const formContainer = document.createElement("div");
     formContainer.classList = classname;
+    newInputElement.addEventListener("change", (e) => {
+      newInputElement.value = e.target.value;
+      console.log(newInputElement.value);
+    });
     formContainer.appendChild(newInputElement);
     formElement.appendChild(formContainer);
   }
 
-  if(options.labels!==null){
+  if (options.labels !== null) {
     for (const label of options.labels) {
       const newLabelElement = document.createElement("label");
       newLabelElement.setAttribute("for", label.for);
@@ -89,19 +94,22 @@ export async function createForm(id, options, containerid, classname) {
       newLabelElement.classList = label.classname;
       formElement.appendChild(newLabelElement);
     }
-
   }
-  
 
   const newSubmitButton = document.createElement("button");
   newSubmitButton.setAttribute("id", options.submit.id);
+  newSubmitButton.setAttribute("type", "submit")
   newSubmitButton.textContent = options.submit.text;
   newSubmitButton.classList = options.submit.classname;
-  if (options.submit.action === "post") {
-    newSubmitButton.addEventListener("click", function () {
-      fetch(options.submit.href, options.submit.actionoptions)
+  newSubmitButton.setAttribute("formaction",  options.submit.formactionURL)
+  newSubmitButton.setAttribute("formenctype",  options.submit.formenctype)
+  newSubmitButton.setAttribute("formmethod",  options.submit.method)
+  if (options.submit.method === "post") {
+    newSubmitButton.addEventListener("click", async function (e) {
+      console.log(e.target.value)
+      /* fetch(options.submit.href, options.submit.actionoptions)
         .then((res) => res.json())
-        .then((data) => console.log("Data enviada: ", data));
+        .then((data) => console.log("Data enviada: ", data));*/
     });
   }
   formElement.appendChild(newSubmitButton);
@@ -114,6 +122,7 @@ export async function createForm(id, options, containerid, classname) {
     rootElement = document.getElementById("root");
     rootElement.appendChild(formElement);
   }
+
 }
 
 export async function createContainer(id, classname, order) {
@@ -121,7 +130,7 @@ export async function createContainer(id, classname, order) {
   containerElement.setAttribute("id", id);
   containerElement.setAttribute("order", order);
   containerElement.classList = classname;
-  containerElement.classList.add("containerGroup")
-  const rootElement = document.getElementById("root") 
-  rootElement.appendChild(containerElement)
+  containerElement.classList.add("containerGroup");
+  const rootElement = document.getElementById("root");
+  rootElement.appendChild(containerElement);
 }
